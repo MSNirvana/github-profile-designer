@@ -86,7 +86,10 @@ function renderMarkdown(markdown) {
     }
   };
 
-  for (const line of lines) {
+  const tableCells = (line) => line.trim().replace(/^\||\|$/g, "").split("|").map((cell) => cell.trim());
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
     if (code) {
       if (/^```/.test(line)) {
         output.push(`<pre><code>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
@@ -95,6 +98,24 @@ function renderMarkdown(markdown) {
       } else {
         codeLines.push(line);
       }
+      continue;
+    }
+    if (/^\s*\|.*\|\s*$/.test(line) && /^\s*\|?(?:\s*:?-{3,}:?\s*\|)+\s*$/.test(lines[index + 1] || "")) {
+      flushParagraph();
+      closeList();
+      const headers = tableCells(line);
+      output.push("<table><thead><tr>");
+      for (const header of headers) output.push(`<th>${inline(header)}</th>`);
+      output.push("</tr></thead><tbody>");
+      index += 2;
+      while (index < lines.length && /^\s*\|.*\|\s*$/.test(lines[index])) {
+        output.push("<tr>");
+        for (const cell of tableCells(lines[index])) output.push(`<td>${inline(cell)}</td>`);
+        output.push("</tr>");
+        index += 1;
+      }
+      output.push("</tbody></table>");
+      index -= 1;
       continue;
     }
     if (/^\s*$/.test(line)) {
@@ -151,6 +172,9 @@ function documentHtml(content, title) {
     h2 { font-size: 1.5em; border-bottom: 1px solid #d8dee4; padding-bottom: .3em; }
     p,li,blockquote { line-height: 1.6; }
     img { max-width: 100%; height: auto; border-radius: 6px; }
+    table { width: 100%; border-spacing: 0; border-collapse: collapse; margin: 16px 0; }
+    th, td { padding: 8px 12px; border: 1px solid #d0d7de; text-align: left; vertical-align: top; }
+    th { background: #f6f8fa; font-weight: 600; }
     a { color: #0969da; }
     code { padding: .2em .4em; background: #eff1f3; border-radius: 4px; font-family: ui-monospace,SFMono-Regular,Menlo,monospace; }
     blockquote { margin-left: 0; padding: 0 1em; color: #57606a; border-left: .25em solid #d0d7de; }

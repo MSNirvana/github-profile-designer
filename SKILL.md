@@ -126,6 +126,7 @@ If authentication or repository permissions are missing, stop at the export and 
 - Use `scripts/discover-profile.mjs` for deterministic public-data collection.
 - Use `scripts/render-preview.mjs` for a local visual check; it is a lightweight Markdown preview, not a claim that GitHub supports arbitrary HTML.
 - Use `scripts/validate-readme.mjs` before delivery and after any user edits.
+- Use `scripts/render-workflow-demo.mjs` when documenting or screenshotting the discovery, style, and preview stages.
 - Read `references/output-schema.md` before interpreting discovery JSON or building an asset manifest.
 - Read `references/style-system.md` for style selection and `references/github-rendering.md` for compatibility decisions.
 
