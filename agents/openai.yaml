@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Profile Designer"
+  short_description: "Design and publish GitHub profile READMEs"
+  default_prompt: "Design my GitHub profile README from public profile and repository data, ask for missing details, preview styles, and export or publish the result."
