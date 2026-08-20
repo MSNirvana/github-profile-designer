@@ -6,6 +6,8 @@ GitHub Profile README files are rendered as repository Markdown. Treat them as a
 
 - Use Markdown headings, lists, links, tables, blockquotes, and fenced code where appropriate.
 - Use `<img>` with explicit `alt`, `width`, and `height` when stable sizing matters.
+- For Logo + project-name rows, add explicit dimensions and `align="absmiddle"` so GitHub's default image baseline does not make the Logo drift vertically.
+- When a project table should span the profile content area, use a sanitized HTML `<table width="100%">` with explicit heading alignment, then verify it at wide and narrow viewports.
 - Use `<picture>` only for simple light/dark image variants with a static fallback.
 - Keep important content in text; never put the only copy inside an image.
 - Commit important assets to the profile repository or use a stable, user-controlled URL.

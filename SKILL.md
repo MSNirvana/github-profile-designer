@@ -22,6 +22,8 @@ Use this skill to turn a user's public GitHub presence into an intentional, GitH
 - Never place access tokens, cookies, or local secrets in generated files, logs, previews, or prompts.
 - Prefer real project screenshots and project-owned logos. Do not use random stock images as substitutes.
 - Do not promise browser-like CSS or JavaScript inside GitHub README. Convert motion to a hosted GIF/APNG/SVG or provide a static fallback.
+- For inline Logo and project-name rows, use explicit image dimensions with `align="absmiddle"` and inspect the rendered baseline.
+- When a project table is intended to span the profile container, use `<table width="100%">` and verify that columns remain readable without horizontal overflow.
 
 ## Workflow
 
@@ -93,6 +95,7 @@ Before generating, run a duplication pass:
 2. Remove any proof row whose canonical URL or repository name already appears in the product matrix.
 3. Replace removed rows with distinct public repositories from the full inventory, or ask the user to choose when no trustworthy candidate has enough evidence.
 4. Check that contact links appear in one visual location only.
+5. Check that each selected project has one visually aligned Logo/name row and that any project table has an explicit full-width treatment.
 
 ### 6. Generate output
 

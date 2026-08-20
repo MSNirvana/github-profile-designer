@@ -69,8 +69,10 @@ The Skill follows this sequence:
 4. Offer five styles and record density, palette, motion, and language mix.
 5. Deduplicate product showcases and open-source proof so one project is not repeated across modules.
 6. Keep contact links in one visual location and prefer small, source-backed brand icons over a repeated bottom contact block.
-7. Generate a case, then preview and validate it.
-8. Export the files or update the Profile repository after explicit confirmation.
+7. Give Logo + project-name rows explicit dimensions and `align="absmiddle"` so GitHub keeps them vertically aligned.
+8. Use `<table width="100%">` when a project table should fill the profile container, then check readability at wide and narrow viewports.
+9. Generate a case, then preview and validate it.
+10. Export the files or update the Profile repository after explicit confirmation.
 
 ## CLI scripts
 
