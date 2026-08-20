@@ -6,7 +6,7 @@ Turn public GitHub information into a profile README that feels intentional and 
 
 `github-profile-designer` is a generic Codex Skill. It researches a GitHub user and public repositories, asks for missing information, offers a small visual style system, generates a README case, validates GitHub compatibility, and then exports the files or publishes them to the user's Profile repository after confirmation.
 
-It is not a fixed template and does not ship with any mascot, company identity, or private asset library.
+It is not a fixed template and does not ship with any mascot, company identity, or private asset library. Each run re-reads the user's complete public repository set instead of silently reusing a previous README selection.
 
 ## Workflow
 
@@ -18,7 +18,7 @@ The screenshots below come from a real public-data run against `octocat`. They w
 
 ### 1. Discover public data
 
-The Skill collects profile facts, repository descriptions, languages, Topics, Stars, Forks, README images, project sites, and logo candidates. It keeps found values separate from missing values.
+The Skill first inventories the complete public repository set, then collects profile facts, repository descriptions, languages, Topics, Stars, Forks, README images, project sites, and logo candidates. It keeps found values separate from missing values.
 
 ![Public discovery: profile facts, project candidates, and missing fields](docs/screenshots/01-discovery.png)
 
@@ -63,12 +63,14 @@ Search public data first, show what you found and what is missing, then let me c
 
 The Skill follows this sequence:
 
-1. Read public data and preserve source URLs.
+1. Read the complete public repository inventory and preserve source URLs.
 2. Separate found, inferred, and missing values. Never turn an inference into a fact.
 3. Ask for missing positioning, project highlights, logos, screenshots, and contact links.
 4. Offer five styles and record density, palette, motion, and language mix.
-5. Generate a case, then preview and validate it.
-6. Export the files or update the Profile repository after explicit confirmation.
+5. Deduplicate product showcases and open-source proof so one project is not repeated across modules.
+6. Keep contact links in one visual location and prefer small, source-backed brand icons over a repeated bottom contact block.
+7. Generate a case, then preview and validate it.
+8. Export the files or update the Profile repository after explicit confirmation.
 
 ## CLI scripts
 
@@ -121,6 +123,7 @@ Every important visual should have a source, fallback, and alt text. When no tru
 - Require explicit confirmation before publishing to GitHub.
 - Never invent outcomes, clients, metrics, roles, or dates.
 - Keep important meaning in text; do not hide the entire profile inside an image.
+- Evaluate product, proof, contribution, and contact modules for information value; remove redundant or colliding modules instead of stacking them.
 
 Read the detailed rules in:
 
@@ -150,4 +153,3 @@ node scripts/render-workflow-demo.mjs \
 ## License
 
 [MIT](LICENSE)
-

@@ -11,8 +11,13 @@ Use this skill to turn a user's public GitHub presence into an intentional, GitH
 
 - Keep the design generic and user-owned. Never add a mascot, brand, visual identity, or asset that the user did not request.
 - Search public GitHub information first. Do not ask the user to repeat information that the API already exposes.
+- Enumerate the user's complete public repository set before choosing featured projects. Treat an earlier README as a draft, not the source of truth.
 - Separate `found`, `inferred`, and `missing` values. Do not turn an inference into a fact.
 - Show source URLs for profile data, repository facts, logos, screenshots, and project sites.
+- Keep product showcases and open-source proof separate. Do not repeat the same repository or product in both sections unless the user explicitly requests a cross-link.
+- Prefer distinct public repositories with different names, descriptions, logos, screenshots, or homepages when filling an open-source proof section.
+- Use one contact row near the identity block. Prefer small, source-backed brand icons with descriptive `alt` text; remove a repeated bottom contact section.
+- Remove contribution graphs, activity routes, or stats panels when they duplicate proof content or collide with contact content.
 - Ask for user confirmation before sending any write, upload, commit, push, or pull-request action.
 - Never place access tokens, cookies, or local secrets in generated files, logs, previews, or prompts.
 - Prefer real project screenshots and project-owned logos. Do not use random stock images as substitutes.
@@ -39,10 +44,10 @@ Run the bundled script from the skill directory:
 node scripts/discover-profile.mjs --username <username> --output <workdir>/profile-discovery.json
 ```
 
-Use `--repo-limit 12` for a broad first pass or a smaller limit when rate limits are tight. The script uses GitHub's public REST API and can use an already-authenticated `GH_TOKEN`/`GITHUB_TOKEN` without printing it. Read the resulting JSON and present:
+Use a broad `--repo-limit` for discovery, then rank and filter locally. The script uses GitHub's public REST API and can use an already-authenticated `GH_TOKEN`/`GITHUB_TOKEN` without printing it. If the REST API is rate-limited, use the user's authenticated GitHub CLI/API session to enumerate public repositories instead of silently reusing the previous README selection. Read the resulting JSON and present:
 
 1. Profile facts with their source URLs.
-2. Candidate repositories ranked by public signals and recency.
+2. The complete public-repository inventory, followed by candidates ranked by public signals and recency.
 3. Candidate logos, screenshots, social previews, homepages, and favicons for each selected project.
 4. Missing fields and a short question for each missing field.
 
@@ -81,6 +86,13 @@ Create a content and asset plan before writing the final README:
 - Optional sections: now, writing, talks, stats, contribution graph, or currently learning.
 
 Use stable widths and `alt` text for every image. Prefer local committed assets for important visuals, with a source manifest beside the README. Use remote badges/widgets sparingly and record their URL.
+
+Before generating, run a duplication pass:
+
+1. Record canonical repository URLs for every product and proof row.
+2. Remove any proof row whose canonical URL or repository name already appears in the product matrix.
+3. Replace removed rows with distinct public repositories from the full inventory, or ask the user to choose when no trustworthy candidate has enough evidence.
+4. Check that contact links appear in one visual location only.
 
 ### 6. Generate output
 

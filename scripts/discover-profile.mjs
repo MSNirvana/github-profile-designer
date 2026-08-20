@@ -78,6 +78,17 @@ async function fetchRaw(url) {
   return response.text();
 }
 
+async function fetchAllRepos(login) {
+  const repositories = [];
+  for (let page = 1; page <= 10; page += 1) {
+    const batch = await fetchJson(`${API_ROOT}/users/${encodeURIComponent(login)}/repos?per_page=100&page=${page}&sort=updated&direction=desc&type=owner`);
+    if (!Array.isArray(batch) || batch.length === 0) break;
+    repositories.push(...batch);
+    if (batch.length < 100) break;
+  }
+  return repositories;
+}
+
 function safeUrl(value, base) {
   if (!value || value.startsWith("data:") || value.startsWith("javascript:")) return null;
   try {
@@ -139,6 +150,24 @@ function sourceForRepo(repo) {
   return {
     repository: `https://api.github.com/repos/${repo.full_name}`,
     page: repo.html_url,
+  };
+}
+
+function inventoryEntry(repo) {
+  return {
+    fullName: repo.full_name,
+    name: repo.name,
+    url: repo.html_url,
+    description: repo.description || "",
+    homepage: repo.homepage || "",
+    topics: repo.topics || [],
+    stars: repo.stargazers_count,
+    forks: repo.forks_count,
+    language: repo.language || "",
+    updatedAt: repo.updated_at,
+    archived: repo.archived,
+    fork: repo.fork,
+    score: Math.round(scoreRepository(repo) * 100) / 100,
   };
 }
 
@@ -272,7 +301,7 @@ async function discover(username, options) {
   }
 
   try {
-    rawRepos = await fetchJson(`${API_ROOT}/users/${encodeURIComponent(login)}/repos?per_page=100&sort=updated&direction=desc&type=owner`);
+    rawRepos = await fetchAllRepos(login);
   } catch (error) {
     errors.push({ stage: "repositories", status: error.status || 0, message: error.message, url: error.url });
     rawRepos = [];
@@ -281,6 +310,7 @@ async function discover(username, options) {
   const ranked = rawRepos
     .filter((repo) => !repo.private)
     .sort((left, right) => scoreRepository(right) - scoreRepository(left));
+  const repositoryInventory = ranked.map((repo) => inventoryEntry(repo));
   const selected = ranked.slice(0, Math.max(1, options.repoLimit));
   const readmeLimit = Math.max(0, Math.min(options.readmeLimit, selected.length));
   const repositories = [];
@@ -308,6 +338,7 @@ async function discover(username, options) {
     fetchedAt: new Date().toISOString(),
     query: { username: login, repoLimit: options.repoLimit, readmeLimit: options.readmeLimit },
     profile,
+    repositoryInventory,
     repositories,
     consideredRepositories: ranked.length,
     gaps,
