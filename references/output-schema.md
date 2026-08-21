@@ -6,22 +6,22 @@
 {
   "schemaVersion": "1.0",
   "fetchedAt": "ISO-8601 timestamp",
-  "query": {"username": "octocat", "repoLimit": 12},
+  "query": {"username": "<username>", "repoLimit": 12},
   "profile": {
-    "login": "octocat",
-    "name": "The Octocat",
+    "login": "<username>",
+    "name": "<display name>",
     "bio": "...",
     "avatarUrl": "https://...",
-    "profileUrl": "https://github.com/octocat",
+    "profileUrl": "https://github.com/<username>",
     "blog": "https://...",
     "social": {"twitter": "..."},
-    "sources": {"name": "https://api.github.com/users/octocat"}
+    "sources": {"name": "https://api.github.com/users/<username>"}
   },
   "repositoryInventory": [
     {
-      "fullName": "octocat/example",
+      "fullName": "<username>/example",
       "name": "example",
-      "url": "https://github.com/octocat/example",
+      "url": "https://github.com/<username>/example",
       "description": "...",
       "homepage": "https://...",
       "topics": ["..."],
@@ -36,9 +36,9 @@
   ],
   "repositories": [
     {
-      "fullName": "octocat/example",
+      "fullName": "<username>/example",
       "name": "example",
-      "url": "https://github.com/octocat/example",
+      "url": "https://github.com/<username>/example",
       "description": "...",
       "homepage": "https://...",
       "topics": ["..."],
@@ -52,7 +52,7 @@
         "websiteCandidates": [],
         "socialPreview": {"url": "https://...", "reason": "..."}
       },
-      "sources": {"repository": "https://api.github.com/repos/..."}
+      "sources": {"repository": "https://api.github.com/repos/<username>/example"}
     }
   ],
   "gaps": [{"field": "positioningStatement", "prompt": "...", "severity": "high"}],

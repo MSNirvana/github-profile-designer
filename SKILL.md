@@ -1,154 +1,99 @@
 ---
 name: github-profile-designer
-description: Design, generate, validate, and optionally publish polished GitHub profile README pages from public GitHub profile and repository data. Use when a user asks to decorate, redesign, generate, audit, preview, or update a GitHub Profile README, including requests for project showcases, repository logos, screenshots, styles, badges, animated assets, or a copy-ready export.
+description: Design, audit, validate, and optionally publish a GitHub Profile README from a user's public GitHub profile and complete public repository inventory. Use for profile README redesigns, project selection, repository logos, screenshots, visual styles, GitHub-safe layouts, previews, and copy-ready or published output.
 ---
 
 # GitHub Profile Designer
 
-Use this skill to turn a user's public GitHub presence into an intentional, GitHub-compatible profile README. Treat the README as a constrained publishing surface: use Markdown, supported HTML, images, SVG/GIF/APNG assets, and external widgets only when they improve the page and remain maintainable.
+Use this skill to turn public GitHub evidence into a focused, GitHub-compatible Profile README. Treat the README as a constrained Markdown surface, not a web app.
 
-## Operating Rules
+## Non-negotiable rules
 
-- Keep the design generic and user-owned. Never add a mascot, brand, visual identity, or asset that the user did not request.
-- Search public GitHub information first. Do not ask the user to repeat information that the API already exposes.
-- Enumerate the user's complete public repository set before choosing featured projects. Treat an earlier README as a draft, not the source of truth.
-- Separate `found`, `inferred`, and `missing` values. Do not turn an inference into a fact.
-- Show source URLs for profile data, repository facts, logos, screenshots, and project sites.
-- Keep product showcases and open-source proof separate. Do not repeat the same repository or product in both sections unless the user explicitly requests a cross-link.
-- Prefer distinct public repositories with different names, descriptions, logos, screenshots, or homepages when filling an open-source proof section.
-- Use one contact row near the identity block. Prefer small, source-backed brand icons with descriptive `alt` text; remove a repeated bottom contact section.
-- Remove contribution graphs, activity routes, or stats panels when they duplicate proof content or collide with contact content.
-- Ask for user confirmation before sending any write, upload, commit, push, or pull-request action.
-- Never place access tokens, cookies, or local secrets in generated files, logs, previews, or prompts.
-- Prefer real project screenshots and project-owned logos. Do not use random stock images as substitutes.
-- Do not promise browser-like CSS or JavaScript inside GitHub README. Convert motion to a hosted GIF/APNG/SVG or provide a static fallback.
-- For inline Logo and project-name rows, use explicit image dimensions with `align="absmiddle"` and inspect the rendered baseline.
-- When a project table is intended to span the profile container, use `<table width="100%">` and verify that columns remain readable without horizontal overflow.
+- Keep the output generic and user-owned. Never introduce a mascot, brand, or private asset unless the user supplies it for that profile.
+- Search public GitHub data before asking the user for facts exposed by GitHub.
+- Enumerate the complete public repository inventory before selecting projects. An existing README is only a draft.
+- Keep `found`, `inferred`, and `missing` values separate. Never present an inference as a fact.
+- Preserve source URLs for profile facts, repository facts, logos, screenshots, and project sites.
+- Keep product showcases, open-source proof, contribution evidence, and contacts distinct. Do not repeat a repository or product across modules.
+- Prefer source-backed project logos and real project screenshots. Mark ambiguous or missing assets instead of inventing replacements.
+- Use one contact row near the identity block. Remove duplicate bottom contact blocks and redundant stats/activity modules.
+- Use GitHub-supported Markdown/HTML only. No JavaScript, CSS, iframe, or browser-layout assumptions inside the README.
+- For Logo/name rows, set explicit image dimensions and `align="absmiddle"`. For tables that should span the profile container, use `<table width="100%">` and verify narrow layouts.
+- Convert motion to a compatible SVG/GIF/APNG and provide a static fallback.
+- Never place tokens, cookies, secrets, or private data in outputs, logs, or prompts.
 
-## Workflow
+## Procedure
 
-### 1. Define the target
+### 1. Establish the target
 
-Ask for or identify:
+Identify the GitHub username/profile URL, the special profile repository (`<username>/<username>`), the language mix, the audience/goal, and whether the result is export-only or publishable. Default to export-only until the user explicitly confirms a write.
 
-- GitHub username or profile URL.
-- Whether the target is the user's special profile repository (`<username>/<username>`).
-- Desired language mix, audience, and primary goal (hiring, open source, products, research, or community).
-- Whether the user wants a direct GitHub update or a copy-ready export.
+### 2. Discover evidence
 
-Default to the public profile only and to an export before any write. If a GitHub username is available, run the discovery script before asking content questions.
-
-### 2. Discover public data
-
-Run the bundled script from the skill directory:
+Run the bundled discovery script with the username:
 
 ```bash
 node scripts/discover-profile.mjs --username <username> --output <workdir>/profile-discovery.json
 ```
 
-Use a broad `--repo-limit` for discovery, then rank and filter locally. The script uses GitHub's public REST API and can use an already-authenticated `GH_TOKEN`/`GITHUB_TOKEN` without printing it. If the REST API is rate-limited, use the user's authenticated GitHub CLI/API session to enumerate public repositories instead of silently reusing the previous README selection. Read the resulting JSON and present:
+Read the complete `repositoryInventory` first. Then inspect the enriched repositories, profile facts, source URLs, asset candidates, and gaps. Present only the evidence needed for decisions; do not repeat facts the API already returned.
 
-1. Profile facts with their source URLs.
-2. The complete public-repository inventory, followed by candidates ranked by public signals and recency.
-3. Candidate logos, screenshots, social previews, homepages, and favicons for each selected project.
-4. Missing fields and a short question for each missing field.
+### 3. Resolve gaps and select projects
 
-When a README image is found, preserve its original URL and evidence (alt text, source README, and nearby text). A social preview or favicon is a candidate, not a confirmed project logo. Ask the user to approve or replace ambiguous assets.
+Ask only for missing or ambiguous positioning, project highlights, screenshots, logos, websites, language mix, and contacts. Select 3-6 projects using public evidence, recency, relevance, and distinctness.
 
-### 3. Resolve gaps
+Run a duplication pass before writing:
 
-Ask only for missing or ambiguous values. Prioritize:
+1. Canonicalize every product and repository URL.
+2. Remove any repeated repository/product across sections.
+3. Replace removed rows with distinct evidence-backed candidates from the full inventory, or leave the slot missing.
+4. Keep contacts in one visual location.
 
-1. One-line positioning statement.
-2. Which 3-6 repositories or products to feature.
-3. Project highlight, outcome, or differentiator for each selected item.
-4. Logo and screenshot confirmation or upload/URL.
-5. Contact and social links.
+### 4. Choose and build the case
 
-Keep the user's original wording when they provide copy. Offer a concise rewrite only as an explicit alternative. Do not invent metrics, clients, roles, or dates.
+Read [references/style-system.md](references/style-system.md) only when style selection is needed. Record the selected style, density, palette, motion, language mix, and section order.
 
-### 4. Select a style
+Build a focused case with:
 
-Read [references/style-system.md](references/style-system.md) and offer the five styles by name. Recommend one based on the user's audience and repository mix, then let the user choose. Record these decisions:
+- identity: name, positioning, one primary CTA;
+- proof: selected products/projects, screenshots/logos, public signals;
+- navigation: website, social links, and selected repositories;
+- optional sections only when evidence gives them real value.
 
-- style name and density (`compact`, `standard`, or `rich`)
-- palette (default or user-specified)
-- motion (`static`, `light`, or `animated`)
-- language mix and section order
+Keep important meaning in text. Use local committed assets for important visuals, explicit `alt` text, stable dimensions, and a source manifest when assets are collected.
 
-Do not combine incompatible patterns without explaining the trade-off. Keep the first case focused; add sections only when they have evidence to fill them.
+### 5. Preview and validate
 
-### 5. Build a case draft
+Render the README with `scripts/render-preview.mjs` and inspect both a wide viewport and a narrow viewport when available. Read [references/github-rendering.md](references/github-rendering.md) for compatibility decisions.
 
-Create a content and asset plan before writing the final README:
-
-- Hero: name, positioning line, one primary call to action.
-- Proof: selected projects, real screenshots/logos, languages, or public signals.
-- Navigation: contact, website, social links, and selected repositories.
-- Optional sections: now, writing, talks, stats, contribution graph, or currently learning.
-
-Use stable widths and `alt` text for every image. Prefer local committed assets for important visuals, with a source manifest beside the README. Use remote badges/widgets sparingly and record their URL.
-
-Before generating, run a duplication pass:
-
-1. Record canonical repository URLs for every product and proof row.
-2. Remove any proof row whose canonical URL or repository name already appears in the product matrix.
-3. Replace removed rows with distinct public repositories from the full inventory, or ask the user to choose when no trustworthy candidate has enough evidence.
-4. Check that contact links appear in one visual location only.
-5. Check that each selected project has one visually aligned Logo/name row and that any project table has an explicit full-width treatment.
-
-### 6. Generate output
-
-Generate a copy-ready directory, normally:
-
-```text
-profile-output/<username>/
-├── README.md
-├── assets/
-├── assets-manifest.json
-└── profile-discovery.json
-```
-
-Keep the README readable in raw Markdown. Use HTML only where GitHub reliably renders it, such as aligned tables or images with explicit dimensions. Do not add JavaScript, CSS files, `<script>`, iframes, or unsupported layout assumptions.
-
-### 7. Preview and validate
-
-Render the README for visual inspection:
-
-```bash
-node scripts/render-preview.mjs --readme <path>/README.md --output <path>/preview.html
-```
-
-Validate the final Markdown and assets:
+Validate with:
 
 ```bash
 node scripts/validate-readme.mjs --readme <path>/README.md --assets <path>/assets
 ```
 
-Read [references/github-rendering.md](references/github-rendering.md) when choosing widgets, images, animation, or layout. Fix all errors and review warnings with the user. Check both a wide viewport and a narrow viewport when a browser or local preview is available.
+Fix all errors and review warnings before delivery. Check project duplication, Logo/name baseline alignment, full-width tables, image fallbacks, alt text, and horizontal overflow.
 
-### 8. Deliver or publish
+### 6. Deliver or publish
 
-Offer two explicit outcomes:
+- Export: provide the generated README and assets without changing GitHub.
+- Publish: only after the user confirms the exact files and destination; use the authenticated GitHub workflow, commit intentionally, push, then re-read the remote diff and verify the profile URL.
 
-- **Export:** provide the output directory and explain that its `README.md` belongs in the special profile repository.
-- **Publish:** after the user confirms the exact files and destination, use the user's GitHub-authenticated workflow (`gh` or the connected GitHub app) to update the profile repository, commit, and push. Re-read the remote diff and verify the rendered profile URL after publishing.
+Never create a repository, change visibility, or push unrelated files implicitly.
 
-If authentication or repository permissions are missing, stop at the export and explain the exact prerequisite. Never silently create a repository, change visibility, or push unrelated files.
+## Resources
 
-## Resource Guidance
+- `scripts/discover-profile.mjs`: public profile and repository inventory plus asset candidates.
+- `scripts/render-preview.mjs`: lightweight local README preview.
+- `scripts/validate-readme.mjs`: GitHub-safe HTML, image, link, and asset checks.
+- [references/style-system.md](references/style-system.md): style choices and selection heuristics.
+- [references/github-rendering.md](references/github-rendering.md): supported layout and asset rules.
+- [references/output-schema.md](references/output-schema.md): discovery JSON contract.
 
-- Use `scripts/discover-profile.mjs` for deterministic public-data collection.
-- Use `scripts/render-preview.mjs` for a local visual check; it is a lightweight Markdown preview, not a claim that GitHub supports arbitrary HTML.
-- Use `scripts/validate-readme.mjs` before delivery and after any user edits.
-- Use `scripts/render-workflow-demo.mjs` when documenting or screenshotting the discovery, style, and preview stages.
-- Read `references/output-schema.md` before interpreting discovery JSON or building an asset manifest.
-- Read `references/style-system.md` for style selection and `references/github-rendering.md` for compatibility decisions.
+## Failure handling
 
-## Failure Handling
-
-- If GitHub returns `404`, explain that the username or profile is not publicly discoverable and ask for a profile URL or manual data.
-- If GitHub returns a rate-limit error, report the reset context when available and ask the user for a token or a smaller discovery scope; do not retry in a loop.
-- If a repository has no README, homepage, or image, mark its visual assets as missing and ask the user for a logo or screenshot.
-- If a remote image or widget fails validation, provide a local/static fallback and keep the failed URL in the manifest for review.
-- If the user declines publication, leave the export untouched and do not make any GitHub write.
+- `404`: report that the profile is not publicly discoverable and request a profile URL or manual data.
+- Rate limit: report the reset context and use an authenticated GitHub session or a smaller scope; do not retry in a loop.
+- Missing README/logo/screenshot: mark the field missing and ask for a user-provided asset or leave the visual slot out.
+- Failed remote asset/widget: keep the source URL for review and provide a local/static fallback.
+- Publication declined or unconfirmed: leave the export untouched and perform no GitHub write.
